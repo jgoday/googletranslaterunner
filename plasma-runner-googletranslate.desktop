@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Google Translate runner
+X-KDE-ServiceTypes=Plasma/Runner
+Type=Service
+Icon=applications-education-language
+X-KDE-Library=krunner_googletranslate
+X-KDE-PluginInfo-Author=Javier Goday
+X-KDE-PluginInfo-Email=jgoday@gmail.com
+X-KDE-PluginInfo-Name=krunner_googletranslate
+X-KDE-PluginInfo-Version=1.0
+X-KDE-PluginInfo-License=GPL
