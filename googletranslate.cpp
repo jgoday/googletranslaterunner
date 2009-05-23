@@ -21,12 +21,12 @@
 #include "googletranslatehttp.h"
 #include "googletranslateutil.h"
 
+#include <QClipboard>
 #include <QLabel>
 #include <QList>
 
 #include <KApplication>
 #include <KConfigGroup>
-#include <KDebug>
 #include <KIcon>
 
 GoogleTranslateRunner::GoogleTranslateRunner(QObject* parent, const QVariantList &args)
@@ -73,7 +73,7 @@ void GoogleTranslateRunner::match(Plasma::RunnerContext &context)
 
         foreach (const QString &word, words) {
             Plasma::QueryMatch match(this);
-            match.setType(Plasma::QueryMatch::InformationalMatch);
+            match.setType(Plasma::QueryMatch::ExactMatch);
 
             match.setIcon(KIcon("dialog-ok-apply"));
             match.setText(word);
@@ -89,6 +89,8 @@ void GoogleTranslateRunner::run(const Plasma::RunnerContext &context, const Plas
 {
     Q_UNUSED(context)
     Q_UNUSED(match)
+
+    kapp->clipboard()->setText(match.text());
 }
 
 #include "googletranslate.moc"

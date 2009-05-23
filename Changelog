@@ -1,5 +1,23 @@
+commit 3b85639ac628ba38c4b5bf55a6fcc54217809516
+Author: Javier Goday <jgoday@gmail.com>
+Date:   Sat May 23 20:54:09 2009 +0200
+
+    Check for a QHttp error and show it
+
+ 4 files changed, 26 insertions(+), 6 deletions(-)
+
+commit cbdcf0e94a5db592e9d51cc5ce4f2c048d0f41f7
+Author: Javier Goday <jgoday@gmail.com>
+Date:   Sat May 23 16:54:02 2009 +0200
+
+    Added license and changelog files
+
+ 2 files changed, 345 insertions(+), 0 deletions(-)
+
 commit e808099cc14101207612d911c6db4e6e461839ac
 Author: Javier Goday <jgoday@gmail.com>
 Date:   Fri May 22 17:55:47 2009 +0200
 
     Initial import
+
+ 12 files changed, 620 insertions(+), 0 deletions(-)
