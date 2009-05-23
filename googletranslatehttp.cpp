@@ -64,6 +64,11 @@ QString GoogleTranslateHttp::request(const QString &text, const QString &fromLan
     return QString::fromUtf8(readAll());
 }
 
+bool GoogleTranslateHttp::hasError() const
+{
+    return error() != QHttp::NoError;
+}
+
 void GoogleTranslateHttp::requestFinished()
 {
     loop.exit();

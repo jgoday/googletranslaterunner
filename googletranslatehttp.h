@@ -37,6 +37,11 @@ public:
      */
     QString request(const QString &text, const QString &fromLanguage, const QString &toLanguage);
 
+    /**
+     * Returns true if the request couldn't connect with the server
+     */
+    bool hasError() const;
+
 private slots:
     void requestFinished();
 

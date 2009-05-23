@@ -59,19 +59,28 @@ void GoogleTranslateRunner::match(Plasma::RunnerContext &context)
     QString result = http->request(term, config().readEntry("fromLanguage", "en"),
                                          config().readEntry("toLanguage", "es"));
 
-    QStringList words = GoogleTranslateUtil::parseResult(result);
-
-    foreach (const QString &word, words) {
+    if (http->hasError()) {
         Plasma::QueryMatch match(this);
         match.setType(Plasma::QueryMatch::InformationalMatch);
 
-        match.setIcon(KIcon("dialog-ok-apply"));
-        match.setText(word);
+        match.setIcon(KIcon("dialog-error"));
+        match.setText("Error : " + http->errorString());
 
         context.addMatch(term, match);
     }
+    else {
+        QStringList words = GoogleTranslateUtil::parseResult(result);
 
-    kDebug() << result;
+        foreach (const QString &word, words) {
+            Plasma::QueryMatch match(this);
+            match.setType(Plasma::QueryMatch::InformationalMatch);
+
+            match.setIcon(KIcon("dialog-ok-apply"));
+            match.setText(word);
+
+            context.addMatch(term, match);
+        }
+    }
 
     delete http;
 }
