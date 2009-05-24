@@ -26,7 +26,6 @@
 #include <QList>
 
 #include <KApplication>
-#include <KConfigGroup>
 #include <KIcon>
 
 GoogleTranslateRunner::GoogleTranslateRunner(QObject* parent, const QVariantList &args)
@@ -52,12 +51,14 @@ void GoogleTranslateRunner::match(Plasma::RunnerContext &context)
 {
     const QString term = context.query();
 
-    if (!term.startsWith("gt=") || !term.endsWith("]"))
+    if (!GoogleTranslateUtil::isSearchTerm(term)) {
         return;
+    }
+
+    QPair <QString, QString> languages = GoogleTranslateUtil::getLanguages(term);
 
     GoogleTranslateHttp *http = new GoogleTranslateHttp();
-    QString result = http->request(term, config().readEntry("fromLanguage", "en"),
-                                         config().readEntry("toLanguage", "es"));
+    QString result = http->request(term, languages.first, languages.second);
 
     if (http->hasError()) {
         Plasma::QueryMatch match(this);
@@ -88,7 +89,6 @@ void GoogleTranslateRunner::match(Plasma::RunnerContext &context)
 void GoogleTranslateRunner::run(const Plasma::RunnerContext &context, const Plasma::QueryMatch &match)
 {
     Q_UNUSED(context)
-    Q_UNUSED(match)
 
     kapp->clipboard()->setText(match.text());
 }

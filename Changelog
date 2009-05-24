@@ -1,3 +1,11 @@
+commit 3c0071f03239b95e5a6e62adf2ffe4c7e3ffa92d
+Author: Javier Goday <jgoday@gmail.com>
+Date:   Sat May 23 21:10:03 2009 +0200
+
+    Copy the match text to clipboard
+
+ 2 files changed, 22 insertions(+), 2 deletions(-)
+
 commit 3b85639ac628ba38c4b5bf55a6fcc54217809516
 Author: Javier Goday <jgoday@gmail.com>
 Date:   Sat May 23 20:54:09 2009 +0200

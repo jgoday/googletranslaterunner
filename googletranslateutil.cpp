@@ -17,26 +17,51 @@
  */
 #include "googletranslateutil.h"
 
+#include <QRegExp>
 #include <QStringList>
 
-QPair <QString, QString> GoogleTranslateUtil::getLanguages(const QString &term,
-                                                           const QString &defaultFromLanguage,
-                                                           const QString &defaultToLanguage)
+#include <KGlobal>
+#include <KLocale>
+
+bool GoogleTranslateUtil::isSearchTerm(const QString &term)
 {
-    if (!term.contains("gt=[")) {
-        QString languages = term.mid(3, term.indexOf("[") - 3);
-        if (languages.indexOf(",") > 0) {
-            QStringList languagesList = languages.split(",");
-            return QPair <QString, QString> (languagesList [0], languagesList [1]);
+    if (term.contains("=")) {
+        QPair <QString, QString> languages = getLanguages(term);
+        return KGlobal::locale()->allLanguagesList().contains(languages.first) &&
+               KGlobal::locale()->allLanguagesList().contains(languages.second);
+    }
+
+    return false;
+}
+
+QPair <QString, QString> GoogleTranslateUtil::getLanguages(const QString &term)
+{
+    QRegExp rx("(\\w{2})=");
+    QString fromLanguage = "";
+    QString toLanguage = "";
+
+    if (rx.indexIn(term, 0) != -1) {
+        fromLanguage = rx.cap(1);
+        int pos = rx.matchedLength();
+        if (rx.indexIn(term, pos) != -1 &&
+            KGlobal::locale()->allLanguagesList().contains(rx.cap(1))) {
+            toLanguage = rx.cap(1);
         }
     }
 
-    return QPair <QString, QString> (defaultFromLanguage, defaultToLanguage);
+    return QPair <QString, QString> (fromLanguage, toLanguage);
 }
 
 QString GoogleTranslateUtil::getSearchWord(const QString &term)
 {
-    return term.mid(term.indexOf("[") + 1, term.indexOf("]") - term.indexOf("[") - 1);
+    QRegExp rx("\\w{2}=(.+)\\w{2}=");
+    QString value = "";
+
+    int pos = rx.indexIn(term, 0);
+    if (pos > -1) {
+        value = rx.cap(1);
+    }
+    return value;
 }
 
 QStringList GoogleTranslateUtil::parseResult(const QString &text)

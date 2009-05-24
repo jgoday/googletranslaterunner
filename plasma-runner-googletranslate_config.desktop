@@ -1,9 +1,0 @@
-[Desktop Entry]
-Type=Service
-X-KDE-ServiceTypes=KCModule
-
-X-KDE-Library=kcm_krunner_googletranslate
-X-KDE-ParentComponents=krunner_googletranslate
-X-KDE-PluginKeyword=kcm_krunner_googletranslate
-
-Name=Google translate runner

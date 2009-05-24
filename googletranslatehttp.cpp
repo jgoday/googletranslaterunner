@@ -38,13 +38,12 @@ GoogleTranslateHttp::~GoogleTranslateHttp()
 QString GoogleTranslateHttp::request(const QString &text, const QString &fromLanguage,
                                                           const QString &toLanguage)
 {
-    const QPair <QString, QString> &languages = GoogleTranslateUtil::getLanguages(text, fromLanguage, toLanguage);
     const QString &word = GoogleTranslateUtil::getSearchWord(text);
 
     QString url = QString("/translate_a/t?client=t&sl="+
-                           languages.first +
+                           fromLanguage +
                            "&tl=" +
-                           languages.second);
+                           toLanguage);
     setHost("www.google.com");
 
     QHttpRequestHeader header = QHttpRequestHeader("POST", url, 1, 1);

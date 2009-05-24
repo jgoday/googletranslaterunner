@@ -27,13 +27,15 @@ class GoogleTranslateUtil
 {
 public:
     /**
-     * Returns the languages for the search
-     * manually in the search term (gt=en,de[word])
-     * or the config default languages
+     * returns true if term represents a valid search
      */
-    static QPair <QString, QString> getLanguages(const QString &term,
-                                                 const QString &defaultFromLanguage,
-                                                 const QString &defaultToLanguage);
+    static bool isSearchTerm(const QString &term);
+
+    /**
+     * Returns the languages for the search
+     * manually in the search term (en=Hello es=)
+     */
+    static QPair <QString, QString> getLanguages(const QString &term);
 
     /**
      * Returns the search word from the runner search term (gt=[away])
