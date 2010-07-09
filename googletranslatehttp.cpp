@@ -22,7 +22,7 @@
 #include <QHttpHeader>
 #include <QHttpRequestHeader>
 
-#include <KDebug>
+#include <QDebug>
 
 GoogleTranslateHttp::GoogleTranslateHttp(QObject *parent) :
     QHttp(parent)
@@ -39,7 +39,7 @@ QString GoogleTranslateHttp::request(const QString &text, const QString &fromLan
                                                           const QString &toLanguage)
 {
     const QString &word = GoogleTranslateUtil::getSearchWord(text);
-
+    qDebug() << "Searching " << word << " from = " << fromLanguage << " to = " << toLanguage;
     QString url = QString("/translate_a/t?client=t&sl="+
                            fromLanguage +
                            "&tl=" +
@@ -53,10 +53,6 @@ QString GoogleTranslateHttp::request(const QString &text, const QString &fromLan
 
     QByteArray ba("text=");
     ba.append(word.toUtf8());
-
-    kDebug() << "Request : " << url;
-    kDebug() << "Search word : " << word;
-
     QHttp::request(header, ba);
 
     loop.exec();

@@ -22,6 +22,7 @@
 #include "googletranslateutil.h"
 
 #include <QClipboard>
+#include <QDebug>
 #include <QLabel>
 #include <QList>
 
@@ -39,6 +40,7 @@ GoogleTranslateRunner::GoogleTranslateRunner(QObject* parent, const QVariantList
                     Plasma::RunnerContext::NetworkLocation |
                     Plasma::RunnerContext::Executable |
                     Plasma::RunnerContext::ShellCommand);
+    setSpeed(AbstractRunner::SlowSpeed);
 
     addSyntax(Plasma::RunnerSyntax("gt=", i18n("Translate the word")));
 }

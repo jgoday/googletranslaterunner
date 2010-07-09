@@ -17,11 +17,15 @@
  */
 #include "googletranslateutil.h"
 
+#include <QDebug>
+#include <QMap>
 #include <QRegExp>
-#include <QStringList>
 
 #include <KGlobal>
 #include <KLocale>
+
+// QJSon
+#include <qjson/parser.h>
 
 bool GoogleTranslateUtil::isSearchTerm(const QString &term)
 {
@@ -36,58 +40,65 @@ bool GoogleTranslateUtil::isSearchTerm(const QString &term)
 
 QPair <QString, QString> GoogleTranslateUtil::getLanguages(const QString &term)
 {
-    QRegExp rx("(\\w{2})=");
-    QString fromLanguage = "";
-    QString toLanguage = "";
-
-    if (rx.indexIn(term, 0) != -1) {
-        fromLanguage = rx.cap(1);
-        int pos = rx.matchedLength();
-        if (rx.indexIn(term, pos) != -1 &&
-            KGlobal::locale()->allLanguagesList().contains(rx.cap(1))) {
-            toLanguage = rx.cap(1);
-        }
+    int firstIndex = term.indexOf("=");
+    int lastIndex  = term.lastIndexOf("");
+    if (firstIndex > 0 && lastIndex > firstIndex) {
+        return QPair<QString, QString>(term.left(firstIndex), term.right(term.size() - lastIndex + 1));
     }
-
-    return QPair <QString, QString> (fromLanguage, toLanguage);
+    else {
+        return QPair<QString, QString>("", "");
+    }
 }
 
 QString GoogleTranslateUtil::getSearchWord(const QString &term)
 {
-    QRegExp rx("\\w{2}=(.+)\\w{2}=");
+    QRegExp rx("\\w{2,3}=(.*)=\\w{2,3}");
     QString value = "";
 
     int pos = rx.indexIn(term, 0);
     if (pos > -1) {
         value = rx.cap(1);
     }
+
     return value;
 }
 
 QStringList GoogleTranslateUtil::parseResult(const QString &text)
 {
-    // TODO : use a real json parser
-    QStringList result;
-    QString firstResult = "";
+    QString jsonData = QString(text).replace(",,", ",");
 
-    if (text.contains(",")) {
-        firstResult = text.mid(2, text.indexOf(",") - 3);
+    QStringList result;
+    QJson::Parser parser;
+    bool ok;
+    qDebug() << "Parse result = " << text;
+    QVariantList json = parser.parse(jsonData.toUtf8(), &ok).toList();
+    if (ok) {
+        foreach(const QVariant &data, json) {
+            QVariantList list = data.toList();
+            if (list.size() >= 1)
+                result.append(getWordFromJson(list));
+        }
     }
     else {
-        firstResult = text.mid(1, text.size() - 2);
+        result << "Error getting data : " << parser.errorString();
     }
 
-    int index = firstResult.size() + 5;
-    while (text.indexOf('[', index) > 0) {
-        int endIndex = text.indexOf(']', index);
+    return result;
+}
 
-        QString words = text.mid(index + 1, endIndex - index - 1);
-        result << words;
+QString GoogleTranslateUtil::getWordFromJson(const QVariantList &json)
+{
+    QString result = "";
 
-        index = text.indexOf('[', index + 1);
+    result.append(json.at(0).toList().at(0).toString());
+
+    if (json.at(0).toList().size() > 1) {
+        QVariantList moreData = json.at(0).toList().at(1).toList();
+        result.append(" : ");
+        foreach(const QVariant &data, moreData) {
+            result.append(" " + data.toString());
+        }
     }
-
-    result << firstResult;
 
     return result;
 }

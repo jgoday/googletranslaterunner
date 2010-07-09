@@ -22,6 +22,7 @@
 #include <QList>
 #include <QPair>
 #include <QString>
+#include <QVariant>
 
 class GoogleTranslateUtil
 {
@@ -46,5 +47,8 @@ public:
      * Returns a list of words as the result for the search
      */
     static QStringList parseResult(const QString &text);
+
+private:
+    static QString getWordFromJson(const QVariantList &json);
 };
 #endif
