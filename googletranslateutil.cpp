@@ -29,6 +29,8 @@
 
 bool GoogleTranslateUtil::isSearchTerm(const QString &term)
 {
+    qDebug() << "GoogleTranslateUtil::isSearchTerm -> contains = " << term.contains("=");
+
     if (term.contains("=")) {
         QPair <QString, QString> languages = getLanguages(term);
         return KGlobal::locale()->allLanguagesList().contains(languages.first) &&
@@ -41,18 +43,33 @@ bool GoogleTranslateUtil::isSearchTerm(const QString &term)
 QPair <QString, QString> GoogleTranslateUtil::getLanguages(const QString &term)
 {
     int firstIndex = term.indexOf("=");
-    int lastIndex  = term.lastIndexOf("");
+    int lastIndex  = term.lastIndexOf("=");
+
+    QString firstLanguage = (term.count("=") >= 2) ? term.left(firstIndex) :
+        KGlobal::locale()->language();
+    QString secondLanguage = (lastIndex > 0) ? term.right(term.size() - ( lastIndex + 1)) : "";
+
+    if (firstLanguage.contains("_")) {
+        firstLanguage = firstLanguage.left(firstLanguage.indexOf("_"));
+    }
+
+    qDebug() << "GoogleTranslateUtil::getLanguages -> first = " << firstLanguage;
+    qDebug() << "GoogleTranslateUtil::getLanguages -> second = " << secondLanguage;
+
+    return QPair<QString, QString>(firstLanguage, secondLanguage);
+/**
+
     if (firstIndex > 0 && lastIndex > firstIndex) {
         return QPair<QString, QString>(term.left(firstIndex), term.right(term.size() - lastIndex + 1));
     }
     else {
         return QPair<QString, QString>("", "");
-    }
+    }**/
 }
 
 QString GoogleTranslateUtil::getSearchWord(const QString &term)
 {
-    QRegExp rx("\\w{2,3}=(.*)=\\w{2,3}");
+    QRegExp rx((term.count("=") >= 2) ? "\\w{2,3}=(.*)=\\w{2,3}" : "(.*)=\\w{2,3}");
     QString value = "";
 
     int pos = rx.indexIn(term, 0);
@@ -94,7 +111,9 @@ QString GoogleTranslateUtil::getWordFromJson(const QVariantList &json)
 
     if (json.at(0).toList().size() > 1) {
         QVariantList moreData = json.at(0).toList().at(1).toList();
-        result.append(" : ");
+
+        if (moreData.size() > 0) result.append(" : ");
+
         foreach(const QVariant &data, moreData) {
             result.append(" " + data.toString());
         }
